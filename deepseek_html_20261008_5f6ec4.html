@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HTML Playground</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    color: #333;
+    padding: 20px;
+    padding-bottom: 100px;
+  }
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    overflow: hidden;
+  }
+  header {
+    background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%);
+    color: #fff;
+    padding: 24px 32px;
+    text-align: center;
+  }
+  header h1 { font-size: 1.8rem; margin-bottom: 6px; }
+  header p { opacity: 0.85; font-size: 0.95rem; }
+
+  /* Logo Discord góc phải */
+  #discordLogo {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: #5865F2;
+    padding: 8px;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(88,101,242,0.5);
+    z-index: 900;
+    transition: transform 0.2s, box-shadow 0.2s;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  #discordLogo:hover {
+    transform: scale(1.08);
+    box-shadow: 0 10px 28px rgba(88,101,242,0.7);
+  }
+  #discordLogo svg { width: 100%; height: 100%; display: block; pointer-events: none; }
+  #discordLogo.holding {
+    transform: scale(1.15);
+    box-shadow: 0 0 0 6px rgba(88,101,242,0.35), 0 10px 28px rgba(88,101,242,0.7);
+  }
+
+  .tabs {
+    display: flex;
+    background: #edf2f7;
+    border-bottom: 2px solid #cbd5e0;
+  }
+  .tab {
+    flex: 1;
+    padding: 14px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #4a5568;
+    transition: all 0.2s;
+  }
+  .tab:hover { background: #e2e8f0; }
+  .tab.active {
+    background: #fff;
+    color: #667eea;
+    border-bottom: 3px solid #667eea;
+  }
+
+  .panel { padding: 28px 32px; display: none; }
+  .panel.active { display: block; }
+
+  .form-group { margin-bottom: 18px; }
+  .form-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+    color: #2d3748;
+    font-size: 0.9rem;
+  }
+  .form-group input[type="text"],
+  .form-group input[type="password"],
+  .form-group textarea,
+  .form-group input[type="file"] {
+    width: 100%;
+    padding: 10px 14px;
+    border: 2px solid #cbd5e0;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-family: inherit;
+    transition: border-color 0.2s;
+  }
+  .form-group input:focus,
+  .form-group textarea:focus {
+    outline: none;
+    border-color: #667eea;
+  }
+  .form-group textarea { min-height: 80px; resize: vertical; }
+
+  .btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #fff;
+    width: 100%;
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(102,126,234,0.5); }
+  .btn-danger { background: #e53e3e; color: #fff; padding: 8px 16px; font-size: 0.85rem; }
+  .btn-success { background: #38a169; color: #fff; padding: 8px 16px; font-size: 0.85rem; }
+  .btn-play { background: #667eea; color: #fff; padding: 8px 18px; font-size: 0.9rem; }
+
+  .checkbox-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px;
+    background: #fff5f5;
+    border: 2px solid #feb2b2;
+    border-radius: 8px;
+    margin-bottom: 18px;
+  }
+  .checkbox-group input { width: 18px; height: 18px; cursor: pointer; }
+  .checkbox-group label { margin: 0; color: #c53030; cursor: pointer; font-size: 0.9rem; }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+  }
+  .card {
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #fff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+    display: flex;
+    flex-direction: column;
+  }
+  .card-thumb {
+    height: 140px;
+    background: linear-gradient(135deg, #a0aec0 0%, #718096 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 2.5rem;
+    font-weight: 700;
+  }
+  .card-body { padding: 14px; flex: 1; display: flex; flex-direction: column; }
+  .card-title { font-weight: 700; margin-bottom: 6px; color: #2d3748; }
+  .card-desc { font-size: 0.85rem; color: #718096; margin-bottom: 12px; flex: 1; }
+  .card-meta { font-size: 0.75rem; color: #a0aec0; margin-bottom: 10px; }
+  .card-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+  .empty { text-align: center; padding: 60px 20px; color: #a0aec0; }
+  .empty-icon { font-size: 3rem; margin-bottom: 12px; }
+
+  .badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+  .badge-pending { background: #fefcbf; color: #975a16; }
+  .badge-approved { background: #c6f6d5; color: #22543d; }
+  .badge-rejected { background: #fed7d7; color: #822727; }
+
+  .toast {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translate(-50%, 100px);
+    padding: 14px 22px;
+    background: #2d3748;
+    color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    opacity: 0;
+    transition: all 0.3s;
+    z-index: 10000;
+    max-width: 90%;
+    text-align: center;
+  }
+  .toast.show { transform: translate(-50%, 0); opacity: 1; }
+  .toast.success { background: #38a169; }
+  .toast.error { background: #e53e3e; }
+  .toast.warn { background: #d69e2e; }
+
+  .preview-frame {
+    width: 100%;
+    height: 600px;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    margin-top: 16px;
+    background: #fff;
+  }
+
+  .modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    padding: 20px;
+  }
+  .modal.show { display: flex; }
+  .modal-content {
+    background: #fff;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 900px;
+    max-height: 90vh;
+    overflow: auto;
+    padding: 20px;
+  }
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid #e2e8f0;
+  }
+  .modal-header h2 { color: #2d3748; font-size: 1.3rem; }
+  .close-btn {
+    background: none;
+    border: none;
+    font-size: 1.8rem;
+    cursor: pointer;
+    color: #718096;
+    line-height: 1;
+    padding: 0 8px;
+  }
+  .close-btn:hover { color: #e53e3e; }
+
+  /* Support button */
+  #supportBtn {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: linear-gradient(135deg, #e53e3e, #c53030);
+    color: #fff;
+    border: none;
+    padding: 14px 22px;
+    border-radius: 30px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 8px 24px rgba(229,62,62,0.5);
+    z-index: 9500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: transform 0.2s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  #supportBtn:hover { transform: translateY(-3px); }
+
+  #supportPanel {
+    position: fixed;
+    bottom: 90px;
+    right: 24px;
+    width: 380px;
+    max-width: calc(100vw - 32px);
+    max-height: 600px;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    z-index: 9600;
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  #supportPanel.show { display: flex; }
+
+  .support-header {
+    background: linear-gradient(135deg, #2b6cb0, #2c5282);
+    color: #fff;
+    padding: 14px 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .support-header h3 { font-size: 1rem; }
+  .support-header small { opacity: 0.85; font-size: 0.72rem; display: block; margin-top: 2px; }
+
+  .support-tabs {
+    display: flex;
+    background: #edf2f7;
+    border-bottom: 1px solid #cbd5e0;
+  }
+  .support-tab {
+    flex: 1;
+    padding: 10px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    color: #4a5568;
+    font-size: 0.85rem;
+  }
+  .support-tab.active { background: #fff; color: #2b6cb0; border-bottom: 2px solid #2b6cb0; }
+
+  .support-body {
+    flex: 1;
+    padding: 14px;
+    overflow-y: auto;
+    max-height: 320px;
+    background: #f7fafc;
+  }
+
+  .chat-msg { margin-bottom: 12px; display: flex; flex-direction: column; }
+  .chat-msg .bubble {
+    padding: 10px 14px;
+    border-radius: 14px;
+    max-width: 85%;
+    word-wrap: break-word;
+    font-size: 0.9rem;
+    line-height: 1.4;
+  }
+  .chat-msg.admin .bubble {
+    background: #2b6cb0; color: #fff;
+    align-self: flex-start;
+    border-bottom-left-radius: 4px;
+  }
+  .chat-msg .meta {
+    font-size: 0.7rem; color: #a0aec0; margin-top: 4px; padding: 0 6px;
+  }
+
+  .support-input {
+    display: flex;
+    padding: 10px;
+    border-top: 1px solid #e2e8f0;
+    background: #fff;
+    gap: 8px;
+  }
+  .support-input input {
+    flex: 1;
+    padding: 10px 14px;
+    border: 2px solid #e2e8f0;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-family: inherit;
+  }
+  .support-input input:focus { outline: none; border-color: #2b6cb0; }
+  .support-input button {
+    background: #2b6cb0; color: #fff;
+    border: none; padding: 0 18px;
+    border-radius: 20px; font-weight: 700;
+    cursor: pointer;
+  }
+  .support-input button:disabled { background: #a0aec0; cursor: not-allowed; }
+
+  .support-info {
+    padding: 14px;
+    font-size: 0.85rem;
+    color: #4a5568;
+    line-height: 1.6;
+    background: #fff;
+  }
+  .support-info a { color: #2b6cb0; font-weight: 700; text-decoration: none; word-break: break-all; }
+  .support-info a:hover { text-decoration: underline; }
+
+  .support-locked {
+    padding: 12px;
+    background: #fff5f5;
+    border-top: 2px solid #fed7d7;
+    color: #c53030;
+    font-size: 0.82rem;
+    text-align: center;
+    font-weight: 600;
+  }
+
+  .admin-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: linear-gradient(135deg, #f6ad55, #dd6b20);
+    color: #fff;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    margin-bottom: 16px;
+  }
+
+  @media (max-width: 500px) {
+    .panel { padding: 20px 16px; }
+    header h1 { font-size: 1.4rem; }
+    #discordLogo { width: 50px; height: 50px; }
+    #supportPanel { right: 12px; left: 12px; width: auto; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Logo Discord - giữ 3s để mở admin -->
+<div id="discordLogo" title="Giữ 3 giây để mở Admin">
+  <svg viewBox="0 0 127.14 96.36" fill="#fff" xmlns="http://www.w3.org/2000/svg">
+    <path d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21h0A105.73,105.73,0,0,0,32.71,96.36,77.7,77.7,0,0,0,39.6,85.25a68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1A105.25,105.25,0,0,0,126.6,80.22h0C129.24,52.84,122.09,29.11,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,46,53.89,53,48.84,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.25,60,73.25,53s5-12.74,11.44-12.74S96.23,46,96.12,53,91.08,65.69,84.69,65.69Z"/>
+  </svg>
+</div>
+
+<div class="container">
+  <header>
+    <h1>🎮 HTML Playground</h1>
+    <p>Chia sẻ, kiểm duyệt và chơi các tệp HTML do cộng đồng tạo</p>
+  </header>
+
+  <div class="tabs">
+    <button type="button" class="tab active" data-tab="home">🏠 Trang chủ</button>
+    <button type="button" class="tab" data-tab="upload">📤 Đăng HTML</button>
+    <button type="button" class="tab" data-tab="moderate">🛡️ Kiểm duyệt</button>
+  </div>
+
+  <div class="panel active" id="panel-home">
+    <div id="adminBadgeWrap"></div>
+    <h2 style="margin-bottom:8px; color:#2d3748;">Các HTML đã được duyệt</h2>
+    <p style="color:#718096; margin-bottom:20px;">Nhấn "Chơi ngay" để mở và trải nghiệm.</p>
+    <div class="grid" id="approvedGrid"></div>
+  </div>
+
+  <div class="panel" id="panel-upload">
+    <h2 style="margin-bottom:16px; color:#2d3748;">📤 Đăng tệp HTML mới</h2>
+    <form id="uploadForm">
+      <div class="form-group">
+        <label for="title">Tiêu đề *</label>
+        <input type="text" id="title" placeholder="Ví dụ: Game rắn săn mồi" required maxlength="80">
+      </div>
+      <div class="form-group">
+        <label for="desc">Mô tả</label>
+        <textarea id="desc" placeholder="Mô tả ngắn..." maxlength="300"></textarea>
+      </div>
+      <div class="form-group">
+        <label for="file">Chọn tệp .html *</label>
+        <input type="file" id="file" accept=".html,.htm,text/html" required>
+      </div>
+      <div class="form-group">
+        <label for="author">Tên tác giả</label>
+        <input type="text" id="author" placeholder="Ẩn danh" maxlength="40">
+      </div>
+      <div class="checkbox-group">
+        <input type="checkbox" id="confirmAge">
+        <label for="confirmAge">Tôi xác nhận nội dung <strong>KHÔNG chứa 18+ hoặc bạo lực</strong>.</label>
+      </div>
+      <button type="submit" class="btn btn-primary">Gửi để kiểm duyệt</button>
+    </form>
+  </div>
+
+  <div class="panel" id="panel-moderate">
+    <h2 style="margin-bottom:16px; color:#2d3748;">🛡️ Khu vực kiểm duyệt viên</h2>
+    <p style="color:#718096; margin-bottom:20px;">Xem xét và phê duyệt / từ chối nội dung.</p>
+    <div id="moderateGrid" class="grid"></div>
+  </div>
+</div>
+
+<!-- Modal chơi HTML -->
+<div class="modal" id="playModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2 id="playTitle">Đang chơi...</h2>
+      <button type="button" class="close-btn" onclick="closeModal()">&times;</button>
+    </div>
+    <iframe id="playFrame" class="preview-frame" sandbox="allow-scripts allow-forms allow-modals allow-popups"></iframe>
+  </div>
+</div>
+
+<!-- Modal Admin Login -->
+<div class="modal" id="adminModal">
+  <div class="modal-content" style="max-width:400px;">
+    <div class="modal-header">
+      <h2>🔐 Đăng nhập Admin</h2>
+      <button type="button" class="close-btn" onclick="closeAdminModal()">&times;</button>
+    </div>
+    <div class="form-group">
+      <label for="adminPass">Mật khẩu Admin</label>
+      <input type="password" id="adminPass" placeholder="Nhập mật khẩu...">
+    </div>
+    <button type="button" class="btn btn-primary" onclick="tryAdminLogin()">Đăng nhập</button>
+  </div>
+</div>
+
+<!-- Nút báo lỗi & hỗ trợ -->
+<button type="button" id="supportBtn">🚨 Báo lỗi & Hỗ trợ</button>
+
+<div id="supportPanel">
+  <div class="support-header">
+    <div>
+      <h3>🚨 Báo lỗi & Hỗ trợ</h3>
+      <small id="supportRoleLabel">Chỉ admin có thể nhắn</small>
+    </div>
+    <button type="button" class="close-btn" style="color:#fff; font-size:1.5rem;" onclick="toggleSupport()">&times;</button>
+  </div>
+
+  <div class="support-tabs">
+    <button type="button" class="support-tab active" data-stab="chat">💬 Chat</button>
+    <button type="button" class="support-tab" data-stab="info">📞 Liên hệ</button>
+  </div>
+
+  <div class="support-body" id="supportChatView">
+    <div id="chatMessages"></div>
+  </div>
+
+  <div class="support-body" id="supportInfoView" style="display:none;">
+    <div class="support-info">
+      <p style="margin-bottom:12px;"><strong>📌 Liên hệ khẩn cấp:</strong></p>
+      <p style="margin-bottom:16px;">
+        Nhóm Telegram hỗ trợ:<br>
+        <a href="https://t.me/+K_E1iX8shnQ3MzU9" target="_blank" rel="noopener">https://t.me/+K_E1iX8shnQ3MzU9</a>
+      </p>
+      <p style="margin-bottom:16px;"><strong>⚠️ Quy định:</strong></p>
+      <ul style="padding-left:20px; line-height:1.8;">
+        <li>Không đăng nội dung 18+ hoặc bạo lực</li>
+        <li>Báo cáo nội dung vi phạm cho admin</li>
+        <li>Chỉ admin mới gửi được tin nhắn chat</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="support-input" id="supportInputWrap">
+    <input type="text" id="chatInput" placeholder="Chỉ admin được nhắn..." disabled>
+    <button type="button" id="chatSendBtn" disabled onclick="sendChat()">Gửi</button>
+  </div>
+
+  <div class="support-locked" id="supportLocked">
+    🔒 Chỉ admin mới có thể gửi tin nhắn
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ==================== CẤU HÌNH ==================== */
+const STORAGE_KEY = 'html_playground_items_v3';
+const CHAT_KEY = 'html_playground_chat_v2';
+const ADMIN_PASSWORD = 'TDZvuive88';
+const TELEGRAM_LINK = 'https://t.me/+K_E1iX8shnQ3MzU9';
+
+let isAdmin = sessionStorage.getItem('isAdmin') === '1';
+
+/* ==================== STORAGE ==================== */
+function loadItems() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
+  catch { return []; }
+}
+function saveItems(items) { localStorage.setItem(STORAGE_KEY, JSON.stringify(items)); }
+function genId() { return 'item_' + Date.now() + '_' + Math.random().toString(36).slice(2,8); }
+
+/* ==================== TOAST ==================== */
+let toastTimer;
+function showToast(msg, type) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show ' + (type || '');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function() { t.classList.remove('show'); }, 3000);
+}
+
+/* ==================== ESCAPE ==================== */
+function escapeHtml(str) {
+  return String(str)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+function formatDate(ts) {
+  var d = new Date(ts);
+  return d.toLocaleDateString('vi-VN') + ' ' + d.toLocaleTimeString('vi-VN', {hour:'2-digit', minute:'2-digit'});
+}
+
+/* ==================== TABS ==================== */
+var allTabs = document.querySelectorAll('.tab');
+for (var i = 0; i < allTabs.length; i++) {
+  (function(tab) {
+    tab.addEventListener('click', function() {
+      var tabs = document.querySelectorAll('.tab');
+      for (var j = 0; j < tabs.length; j++) tabs[j].classList.remove('active');
+      var panels = document.querySelectorAll('.panel');
+      for (var k = 0; k < panels.length; k++) panels[k].classList.remove('active');
+      tab.classList.add('active');
+      document.getElementById('panel-' + tab.getAttribute('data-tab')).classList.add('active');
+      if (tab.getAttribute('data-tab') === 'home') renderApproved();
+      if (tab.getAttribute('data-tab') === 'moderate') renderModerate();
+    });
+  })(allTabs[i]);
+}
+
+/* ==================== KIỂM DUYỆT TỰ ĐỘNG ==================== */
+var BLOCKED_KEYWORDS = [
+  'porn','sex','xxx','nude','naked','18+','khiêu dâm','hentai','jav','onlyfans',
+  'gái gọi','mại dâm','khiêu gợi','giết người','máu me','tự tử','khủng bố',
+  'bomb','kill','murder','gore','torture','bạo lực','vũ khí','ma túy','cocaine','heroin'
+];
+function scanContent(html, title, desc) {
+  var lower = (html + ' ' + title + ' ' + desc).toLowerCase();
+  var found = [];
+  for (var i = 0; i < BLOCKED_KEYWORDS.length; i++) {
+    if (lower.indexOf(BLOCKED_KEYWORDS[i]) !== -1) found.push(BLOCKED_KEYWORDS[i]);
+  }
+  return found.filter(function(v, i, a) { return a.indexOf(v) === i; });
+}
+
+/* ==================== UPLOAD FORM ==================== */
+document.getElementById('uploadForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  var title = document.getElementById('title').value.trim();
+  var desc = document.getElementById('desc').value.trim();
+  var author = document.getElementById('author').value.trim() || 'Ẩn danh';
+  var fileInput = document.getElementById('file');
+  var confirmAge = document.getElementById('confirmAge').checked;
+
+  if (!confirmAge) { showToast('Bạn phải xác nhận nội dung không vi phạm!', 'error'); return; }
+  if (!fileInput.files.length) { showToast('Vui lòng chọn tệp HTML!', 'error'); return; }
+
+  var file = fileInput.files[0];
+  if (file.size > 2 * 1024 * 1024) { showToast('Tệp quá lớn (tối đa 2MB)', 'error'); return; }
+
+  var reader = new FileReader();
+  reader.onload = function(ev) {
+    var html = ev.target.result;
+    var violations = scanContent(html, title, desc);
+    var item = {
+      id: genId(), title: title, desc: desc, author: author, html: html,
+      createdAt: Date.now(),
+      status: violations.length > 0 ? 'rejected' : 'pending',
+      violations: violations
+    };
+    var items = loadItems();
+    items.push(item);
+    saveItems(items);
+
+    if (violations.length > 0) showToast('❌ Bị từ chối tự động: ' + violations.join(', '), 'error');
+    else showToast('✅ Đã gửi! Chờ kiểm duyệt.', 'success');
+
+    document.getElementById('uploadForm').reset();
+  };
+  reader.readAsText(file);
+});
+
+/* ==================== RENDER ==================== */
+function renderApproved() {
+  var grid = document.getElementById('approvedGrid');
+  var items = loadItems().filter(function(i) { return i.status === 'approved'; })
+                         .sort(function(a,b) { return b.createdAt - a.createdAt; });
+
+  if (items.length === 0) {
+    grid.innerHTML = '<div class="empty" style="grid-column:1/-1;">' +
+      '<div class="empty-icon">📭</div>' +
+      '<p>Chưa có HTML nào được duyệt. Hãy đăng cái đầu tiên!</p></div>';
+    return;
+  }
+
+  grid.innerHTML = items.map(function(item) {
+    return '<div class="card">' +
+      '<div class="card-thumb">' + escapeHtml(item.title.slice(0,2).toUpperCase()) + '</div>' +
+      '<div class="card-body">' +
+        '<div class="card-title">' + escapeHtml(item.title) + '</div>' +
+        '<div class="card-desc">' + escapeHtml(item.desc || 'Không có mô tả') + '</div>' +
+        '<div class="card-meta">✍️ ' + escapeHtml(item.author) + ' • ' + formatDate(item.createdAt) + '</div>' +
+        '<div class="card-actions">' +
+          '<button type="button" class="btn btn-play" onclick="playItem(\'' + item.id + '\')">▶ Chơi ngay</button>' +
+          (isAdmin ? '<button type="button" class="btn btn-danger" onclick="adminDelete(\'' + item.id + '\')">🗑 Xóa</button>' : '') +
+        '</div>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+function renderModerate() {
+  var grid = document.getElementById('moderateGrid');
+  var items = loadItems().sort(function(a,b) { return b.createdAt - a.createdAt; });
+
+  if (items.length === 0) {
+    grid.innerHTML = '<div class="empty" style="grid-column:1/-1;">' +
+      '<div class="empty-icon">🛡️</div><p>Không có mục nào.</p></div>';
+    return;
+  }
+
+  grid.innerHTML = items.map(function(item) {
+    var badgeClass = 'badge-pending', badgeText = 'Chờ duyệt';
+    if (item.status === 'approved') { badgeClass='badge-approved'; badgeText='Đã duyệt'; }
+    if (item.status === 'rejected') { badgeClass='badge-rejected'; badgeText='Từ chối'; }
+
+    var violationText = (item.violations && item.violations.length)
+      ? '<div style="color:#c53030; font-size:0.8rem; margin-top:6px;">⚠️ Vi phạm: ' + escapeHtml(item.violations.join(', ')) + '</div>'
+      : '';
+
+    return '<div class="card">' +
+      '<div class="card-thumb">' + escapeHtml(item.title.slice(0,2).toUpperCase()) + '</div>' +
+      '<div class="card-body">' +
+        '<div style="margin-bottom:6px;"><span class="badge ' + badgeClass + '">' + badgeText + '</span></div>' +
+        '<div class="card-title">' + escapeHtml(item.title) + '</div>' +
+        '<div class="card-desc">' + escapeHtml(item.desc || 'Không có mô tả') + '</div>' +
+        '<div class="card-meta">✍️ ' + escapeHtml(item.author) + ' • ' + formatDate(item.createdAt) + '</div>' +
+        violationText +
+        '<div class="card-actions">' +
+          '<button type="button" class="btn btn-play" onclick="previewItem(\'' + item.id + '\')">👁 Xem</button>' +
+          (item.status === 'pending' ? (
+            '<button type="button" class="btn btn-success" onclick="approveItem(\'' + item.id + '\')">✓ Duyệt</button>' +
+            '<button type="button" class="btn btn-danger" onclick="rejectItem(\'' + item.id + '\')">✗ Từ chối</button>'
+          ) : '') +
+          (isAdmin ? '<button type="button" class="btn btn-danger" onclick="adminDelete(\'' + item.id + '\')">🗑 Xóa</button>' : '') +
+        '</div>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+/* ==================== HÀNH ĐỘNG ==================== */
+function approveItem(id) {
+  var items = loadItems();
+  for (var i = 0; i < items.length; i++) {
+    if (items[i].id === id) { items[i].status = 'approved'; break; }
+  }
+  saveItems(items);
+  showToast('✅ Đã duyệt!', 'success');
+  renderModerate();
+}
+
+function rejectItem(id) {
+  var items = loadItems();
+  for (var i = 0; i < items.length; i++) {
+    if (items[i].id === id) { items[i].status = 'rejected'; break; }
+  }
+  saveItems(items);
+  showToast('❌ Đã từ chối.', 'warn');
+  renderModerate();
+}
+
+function adminDelete(id) {
+  if (!isAdmin) { showToast('Chỉ admin mới có quyền xóa!', 'error'); return; }
+  if (!confirm('Admin xóa vĩnh viễn mục này?')) return;
+  var items = loadItems().filter(function(i) { return i.id !== id; });
+  saveItems(items);
+  showToast('🗑 Admin đã xóa.', 'success');
+  renderApproved();
+  renderModerate();
+}
+
+function previewItem(id) {
+  var items = loadItems();
+  for (var i = 0; i < items.length; i++) {
+    if (items[i].id === id) {
+      document.getElementById('playTitle').textContent = '👁 Xem trước: ' + items[i].title;
+      document.getElementById('playFrame').srcdoc = items[i].html;
+      document.getElementById('playModal').classList.add('show');
+      return;
+    }
+  }
+}
+
+function playItem(id) {
+  var items = loadItems();
+  for (var i = 0; i < items.length; i++) {
+    if (items[i].id === id && items[i].status === 'approved') {
+      document.getElementById('playTitle').textContent = '🎮 ' + items[i].title;
+      document.getElementById('playFrame').srcdoc = items[i].html;
+      document.getElementById('playModal').classList.add('show');
+      return;
+    }
+  }
+  showToast('Không tìm thấy.', 'error');
+}
+
+function closeModal() {
+  document.getElementById('playModal').classList.remove('show');
+  document.getElementById('playFrame').srcdoc = '';
+}
+
+/* ==================== ADMIN - GIỮ LOGO 3s ==================== */
+var discordLogo = document.getElementById('discordLogo');
+var holdTimer = null;
+var holdTriggered = false;
+
+function startHold() {
+  holdTriggered = false;
+  discordLogo.classList.add('holding');
+  holdTimer = setTimeout(function() {
+    holdTriggered = true;
+    discordLogo.classList.remove('holding');
+    if (isAdmin) {
+      isAdmin = false;
+      sessionStorage.removeItem('isAdmin');
+      showToast('👋 Đã đăng xuất admin.', 'warn');
+      updateAdminUI();
+      renderApproved();
+      renderModerate();
+    } else {
+      document.getElementById('adminModal').classList.add('show');
+      setTimeout(function() { document.getElementById('adminPass').focus(); }, 100);
+    }
+  }, 3000);
+}
+
+function cancelHold() {
+  discordLogo.classList.remove('holding');
+  if (holdTimer) { clearTimeout(holdTimer); holdTimer = null; }
+}
+
+// Chuột
+discordLogo.addEventListener('mousedown', function(e) { e.preventDefault(); startHold(); });
+discordLogo.addEventListener('mouseup', cancelHold);
+discordLogo.addEventListener('mouseleave', cancelHold);
+
+// Cảm ứng
+discordLogo.addEventListener('touchstart', function(e) { e.preventDefault(); startHold(); }, {passive:false});
+discordLogo.addEventListener('touchend', cancelHold);
+discordLogo.addEventListener('touchcancel', cancelHold);
+
+// Ngăn context menu khi giữ lâu trên mobile
+discordLogo.addEventListener('contextmenu', function(e) { e.preventDefault(); });
+
+function closeAdminModal() {
+  document.getElementById('adminModal').classList.remove('show');
+  document.getElementById('adminPass').value = '';
+}
+
+function tryAdminLogin() {
+  var pass = document.getElementById('adminPass').value;
+  if (pass === ADMIN_PASSWORD) {
+    isAdmin = true;
+    sessionStorage.setItem('isAdmin', '1');
+    closeAdminModal();
+    showToast('✅ Đăng nhập admin thành công!', 'success');
+    updateAdminUI();
+    renderApproved();
+    renderModerate();
+  } else {
+    showToast('❌ Sai mật khẩu admin!', 'error');
+    document.getElementById('adminPass').value = '';
+  }
+}
+
+// Enter trong ô mật khẩu
+document.getElementById('adminPass').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') tryAdminLogin();
+});
+
+function updateAdminUI() {
+  var roleLabel = document.getElementById('supportRoleLabel');
+  var input = document.getElementById('chatInput');
+  var btn = document.getElementById('chatSendBtn');
+  var locked = document.getElementById('supportLocked');
+  var badgeWrap = document.getElementById('adminBadgeWrap');
+
+  if (isAdmin) {
+    roleLabel.textContent = '👑 Bạn là Admin - có thể nhắn';
+    input.disabled = false;
+    btn.disabled = false;
+    input.placeholder = 'Nhập tin nhắn admin...';
+    locked.style.display = 'none';
+    badgeWrap.innerHTML = '<div class="admin-badge">👑 Bạn đang đăng nhập với quyền ADMIN</div>';
+  } else {
+    roleLabel.textContent = 'Chỉ admin có thể nhắn';
+    input.disabled = true;
+    btn.disabled = true;
+    input.placeholder = 'Chỉ admin được nhắn...';
+    locked.style.display = 'block';
+    badgeWrap.innerHTML = '';
+  }
+}
+
+/* ==================== SUPPORT / CHAT ==================== */
+var supportPanel = document.getElementById('supportPanel');
+var supportBtn = document.getElementById('supportBtn');
+
+supportBtn.addEventListener('click', function(e) {
+  e.preventDefault();
+  e.stopPropagation();
+  supportPanel.classList.toggle('show');
+  if (supportPanel.classList.contains('show')) renderChat();
+});
+
+var supportTabs = document.querySelectorAll('.support-tab');
+for (var s = 0; s < supportTabs.length; s++) {
+  (function(tab) {
+    tab.addEventListener('click', function() {
+      var tabs = document.querySelectorAll('.support-tab');
+      for (var j = 0; j < tabs.length; j++) tabs[j].classList.remove('active');
+      tab.classList.add('active');
+      var target = tab.getAttribute('data-stab');
+      document.getElementById('supportChatView').style.display = target === 'chat' ? 'block' : 'none';
+      document.getElementById('supportInfoView').style.display = target === 'info' ? 'block' : 'none';
+      document.getElementById('supportInputWrap').style.display = target === 'chat' ? 'flex' : 'none';
+      document.getElementById('supportLocked').style.display =
+        (target === 'chat' && !isAdmin) ? 'block' : 'none';
+    });
+  })(supportTabs[s]);
+}
+
+function toggleSupport() {
+  supportPanel.classList.toggle('show');
+  if (supportPanel.classList.contains('show')) renderChat();
+}
+
+function loadChat() {
+  try { return JSON.parse(localStorage.getItem(CHAT_KEY)) || []; }
+  catch { return []; }
+}
+function saveChat(msgs) { localStorage.setItem(CHAT_KEY, JSON.stringify(msgs)); }
+
+function renderChat() {
+  var wrap = document.getElementById('chatMessages');
+  var msgs = loadChat();
+  if (msgs.length === 0) {
+    wrap.innerHTML = '<div style="text-align:center; padding:30px 10px; color:#a0aec0; font-size:0.9rem;">' +
+      '💬 Chưa có tin nhắn.<br>Admin sẽ phản hồi tại đây.</div>';
+    return;
+  }
+  wrap.innerHTML = msgs.map(function(m) {
+    return '<div class="chat-msg ' + m.role + '">' +
+      '<div class="bubble">' + escapeHtml(m.text) + '</div>' +
+      '<div class="meta">' + (m.role === 'admin' ? '👑 Admin' : '👤 Người dùng') + ' • ' + formatDate(m.time) + '</div>' +
+    '</div>';
+  }).join('');
+}
+
+function sendChat() {
+  if (!isAdmin) { showToast('Chỉ admin mới được nhắn!', 'error'); return; }
+  var input = document.getElementById('chatInput');
+  var text = input.value.trim();
+  if (!text) return;
+  var msgs = loadChat();
+  msgs.push({ role: 'admin', text: text, time: Date.now() });
+  saveChat(msgs);
+  input.value = '';
+  renderChat();
+  showToast('📨 Đã gửi.', 'success');
+}
+
+// Enter trong chat
+document.getElementById('chatInput').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') sendChat();
+});
+
+/* ==================== ĐÓNG MODAL KHI CLICK RA NGOÀI ==================== */
+document.getElementById('playModal').addEventListener('click', function(e) {
+  if (e.target.id === 'playModal') closeModal();
+});
+document.getElementById('adminModal').addEventListener('click', function(e) {
+  if (e.target.id === 'adminModal') closeAdminModal();
+});
+
+/* ==================== KHỞI TẠO ==================== */
+updateAdminUI();
+renderApproved();
+renderChat();
+</script>
+
+</body>
+</html>
